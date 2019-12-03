@@ -4,27 +4,81 @@
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QPushButton>
-#include <QTreeView>
+#include <QTableView>
 #include <QSpinBox>
 #include <QtDebug>
+#include <QStringListModel>
 
 Notepad::Notepad(QWidget *parent) : QMainWindow(parent) {
     QWidget *widget = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout;
+    QTableView *table = this->getTableView();
+    layout->addWidget(table);
+    QPushButton *buttonNew = new QPushButton("Bew");
+    layout->addWidget(buttonNew);
+    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
 
-    auto *l = new QVBoxLayout(widget);
-    auto *gb = new QGroupBox;
-    auto *tv = new QTreeView;
+    QVBoxLayout *mainLayout = new QVBoxLayout(widget);
+    QVBoxLayout** layoutRows = getLayoutRows();
+    mainLayout->addLayout(layoutRows[0]);
+    mainLayout->addLayout(layoutRows[1]);
+    mainLayout->addLayout(layoutRows[2]);
 
-    l->addWidget(gb);
-    l->addWidget(tv);
-
-    QPushButton *pb = new QPushButton("Add Button");
-
-    connect(pb, SIGNAL(clicked()), this, SLOT(openDialog()));
-
-    l->addWidget(pb);
     this->setCentralWidget(widget);
 }
+
+QTableView* Notepad::getTableView() {
+    QTableView *table = new QTableView;
+
+    QStringListModel *np = new QStringListModel();
+    QStringList list;
+    list << "a" << "b" << "c";
+    np->setStringList(list);
+    table->setModel(np);
+
+    return table;
+}
+
+QVBoxLayout** Notepad::getLayoutRows() {
+    QVBoxLayout** layouts = (QVBoxLayout**)malloc(1 * sizeof(QVBoxLayout*));
+
+    layouts[0] = this->getTopLayout();
+    layouts[1] = this->getMiddleLayout();
+    layouts[2] = this->getBottomLayout();
+
+    return layouts;
+}
+
+QVBoxLayout* Notepad::getTopLayout() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    QTableView *table = this->getTableView();
+    layout->addWidget(table);
+    QPushButton *buttonNew = new QPushButton("New");
+    layout->addWidget(buttonNew);
+    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
+    return layout;
+}
+
+QVBoxLayout* Notepad::getMiddleLayout() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    QTableView *table = this->getTableView();
+    layout->addWidget(table);
+    QPushButton *buttonNew = new QPushButton("Bew");
+    layout->addWidget(buttonNew);
+    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
+    return layout;
+}
+
+QVBoxLayout* Notepad::getBottomLayout() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    QTableView *table = this->getTableView();
+    layout->addWidget(table);
+    QPushButton *buttonNew = new QPushButton("Stew");
+    layout->addWidget(buttonNew);
+    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
+    return layout;
+}
+
 
 void Notepad::openDialog() {
     Dialog dialog;
@@ -33,4 +87,7 @@ void Notepad::openDialog() {
     } else {
         qDebug() << "Action if cancelled changes";
     }
+}
+
+Notepad::~Notepad() {
 }
