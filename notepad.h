@@ -13,10 +13,9 @@ public:
     Notepad(QWidget *parent = nullptr);
     ~Notepad();
     QTableView* getTableView();
-    QVBoxLayout** getLayoutRows();
-    QVBoxLayout* getTopLayout();
-    QVBoxLayout* getMiddleLayout();
-    QVBoxLayout* getBottomLayout();
+    QHBoxLayout* getTopLayout();
+    QHBoxLayout* getMiddleLayout();
+    QHBoxLayout* getBottomLayout();
 
 private:
     QString title;

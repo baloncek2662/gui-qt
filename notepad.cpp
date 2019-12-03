@@ -1,62 +1,75 @@
 #include "notepad.h"
 #include "dialog.h"
 
-#include <QVBoxLayout>
-#include <QGroupBox>
 #include <QPushButton>
 #include <QTableView>
-#include <QSpinBox>
 #include <QtDebug>
 #include <QStringListModel>
+#include <QLabel>
+#include <QDateEdit>
+#include <QComboBox>
+#include <QVariant>
 
 Notepad::Notepad(QWidget *parent) : QMainWindow(parent) {
     QWidget *widget = new QWidget;
+    widget->setMinimumWidth(800);
+    widget->setMinimumHeight(600);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(widget);
-    QVBoxLayout** layoutRows = getLayoutRows();
-    mainLayout->addLayout(layoutRows[0]);
-    mainLayout->addLayout(layoutRows[1]);
-    mainLayout->addLayout(layoutRows[2]);
+    mainLayout->addLayout(this->getTopLayout());
+    mainLayout->addLayout(this->getMiddleLayout());
+    mainLayout->addLayout(this->getBottomLayout());
 
     this->setCentralWidget(widget);
 }
 
-QVBoxLayout** Notepad::getLayoutRows() {
-    QVBoxLayout** layouts = (QVBoxLayout**)malloc(1 * sizeof(QVBoxLayout*));
+QHBoxLayout* Notepad::getTopLayout() {
+    QHBoxLayout *layout = new QHBoxLayout;
 
-    layouts[0] = this->getTopLayout();
-    layouts[1] = this->getMiddleLayout();
-    layouts[2] = this->getBottomLayout();
+    QLabel *labelFrom = new QLabel;
+    labelFrom->setText("From: ");
+    layout->addWidget(labelFrom);
+    QDateEdit *dateFrom = new QDateEdit;
+    layout->addWidget(dateFrom);
+    QLabel *labelTo = new QLabel;
+    labelTo->setText("To:");
+    layout->addWidget(labelTo);
+    QDateEdit *dateTo = new QDateEdit;
+    layout->addWidget(dateTo);
+    QLabel *labelCategory = new QLabel;
+    labelCategory->setText("Category: ");
+    layout->addWidget(labelCategory);
+    QComboBox *dropdownCategories = new QComboBox;
+    // automate adding items
+    dropdownCategories->addItem("Option 1");
+    dropdownCategories->addItem("Option 2");
+    layout->addWidget(dropdownCategories);
+    QPushButton *buttonFilter = new QPushButton("Filter");
+    layout->addWidget(buttonFilter);
+    QPushButton *buttonClearFilters = new QPushButton("Clear");
+    layout->addWidget(buttonClearFilters);
 
-    return layouts;
+    return layout;
 }
 
-QVBoxLayout* Notepad::getTopLayout() {
-    QVBoxLayout *layout = new QVBoxLayout;
+QHBoxLayout* Notepad::getMiddleLayout() {
+    QHBoxLayout *layout = new QHBoxLayout;
     QTableView *table = this->getTableView();
     layout->addWidget(table);
+    //move to "new", "edit" buttons
+    //connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
+    return layout;
+}
+
+QHBoxLayout* Notepad::getBottomLayout() {
+    QHBoxLayout *layout = new QHBoxLayout;
+
     QPushButton *buttonNew = new QPushButton("New");
     layout->addWidget(buttonNew);
-    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
-    return layout;
-}
-
-QVBoxLayout* Notepad::getMiddleLayout() {
-    QVBoxLayout *layout = new QVBoxLayout;
-    QTableView *table = this->getTableView();
-    layout->addWidget(table);
-    QPushButton *buttonNew = new QPushButton("Bew");
-    layout->addWidget(buttonNew);
-    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
-    return layout;
-}
-
-QVBoxLayout* Notepad::getBottomLayout() {
-    QVBoxLayout *layout = new QVBoxLayout;
-    QTableView *table = this->getTableView();
-    layout->addWidget(table);
-    QPushButton *buttonNew = new QPushButton("Stew");
-    layout->addWidget(buttonNew);
+    QPushButton *buttonEdit = new QPushButton("Edit");
+    layout->addWidget(buttonEdit);
+    QPushButton *buttonDelete = new QPushButton("Delete");
+    layout->addWidget(buttonDelete);
     connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
     return layout;
 }
