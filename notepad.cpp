@@ -11,12 +11,6 @@
 
 Notepad::Notepad(QWidget *parent) : QMainWindow(parent) {
     QWidget *widget = new QWidget;
-    QVBoxLayout *layout = new QVBoxLayout;
-    QTableView *table = this->getTableView();
-    layout->addWidget(table);
-    QPushButton *buttonNew = new QPushButton("Bew");
-    layout->addWidget(buttonNew);
-    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
 
     QVBoxLayout *mainLayout = new QVBoxLayout(widget);
     QVBoxLayout** layoutRows = getLayoutRows();
@@ -25,18 +19,6 @@ Notepad::Notepad(QWidget *parent) : QMainWindow(parent) {
     mainLayout->addLayout(layoutRows[2]);
 
     this->setCentralWidget(widget);
-}
-
-QTableView* Notepad::getTableView() {
-    QTableView *table = new QTableView;
-
-    QStringListModel *np = new QStringListModel();
-    QStringList list;
-    list << "a" << "b" << "c";
-    np->setStringList(list);
-    table->setModel(np);
-
-    return table;
 }
 
 QVBoxLayout** Notepad::getLayoutRows() {
@@ -79,6 +61,17 @@ QVBoxLayout* Notepad::getBottomLayout() {
     return layout;
 }
 
+QTableView* Notepad::getTableView() {
+    QTableView *table = new QTableView;
+
+    QStringListModel *np = new QStringListModel();
+    QStringList list;
+    list << "a" << "b" << "c";
+    np->setStringList(list);
+    table->setModel(np);
+
+    return table;
+}
 
 void Notepad::openDialog() {
     Dialog dialog;
