@@ -1,6 +1,9 @@
 #ifndef NOTEPAD_H
 #define NOTEPAD_H
 
+#include <sys/types.h>
+#include <dirent.h>
+
 #include <QMainWindow>
 #include <QTableView>
 #include <QVBoxLayout>
@@ -12,6 +15,8 @@
 #include <QLabel>
 #include <QDateEdit>
 #include <QComboBox>
+#include <QAbstractTableModel>
+#include <QStandardItem>
 
 class Notepad : public QMainWindow
 {
@@ -34,6 +39,8 @@ private:
     void createCategoriesWidgets();
     void createFilteringWidgets();
     void createBottomLayoutWidgets();
+    QList<QStandardItem *> getNoteInfoByFilename(struct dirent);
+    std::string getFileDate(char* fileName);
 
     QTableView* getTableView();
 
@@ -50,11 +57,15 @@ private:
     QPushButton *buttonNew;
     QPushButton *buttonEdit;
     QPushButton *buttonDelete;
+    QTableView *notesTable;
 
 signals:
 
 public slots:
     void openDialog();
+    void deleteSelectedFile();
 
 };
+
+
 #endif // NOTEPAD_H

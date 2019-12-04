@@ -1,6 +1,14 @@
 #include "notepad.h"
 #include "dialog.h"
 
+#include <sys/types.h>
+#include <fstream>
+#include <dirent.h>
+#include <string>
+#include <sys/stat.h>
+#include <time.h>
+#include <stdio.h>
+
 #include <QPushButton>
 #include <QTableView>
 #include <QtDebug>
@@ -9,6 +17,9 @@
 #include <QDateEdit>
 #include <QComboBox>
 #include <QVariant>
+#include <QStandardItemModel>
+#include <QAbstractItemModel>
+#include <QTreeView>
 
 Notepad::Notepad(QWidget *parent) : QMainWindow(parent) {
     createCentralWidget();
@@ -72,10 +83,10 @@ void Notepad::createFilteringWidgets() {
 }
 
 void Notepad::createMiddleLayout() {
-    // TODO
     QHBoxLayout *layout = new QHBoxLayout;
-    QTableView *table = this->getTableView();
-    layout->addWidget(table);
+
+    notesTable = this->getTableView();
+    layout->addWidget(notesTable);
 
     mainLayout->addLayout(layout);
 }
@@ -87,8 +98,6 @@ void Notepad::createBottomLayout() {
     layout->addWidget(buttonNew);
     layout->addWidget(buttonEdit);
     layout->addWidget(buttonDelete);
-    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
-    connect(buttonEdit, SIGNAL(clicked()), this, SLOT(openDialog()));
 
     mainLayout->addLayout(layout);
 }
@@ -97,18 +106,84 @@ void Notepad::createBottomLayoutWidgets() {
     buttonNew = new QPushButton("New");
     buttonEdit = new QPushButton("Edit");
     buttonDelete = new QPushButton("Delete");
+
+    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
+    connect(buttonEdit, SIGNAL(clicked()), this, SLOT(openDialog()));
+    connect(buttonDelete, SIGNAL(clicked()), this, SLOT(deleteSelectedFile()));
+}
+
+void Notepad::deleteSelectedFile() {
+    QModelIndexList selectedNote = notesTable->selectionModel()->selectedRows();
+    if (selectedNote.count() == 0) {
+        return;
+    }
+    QModelIndex index = selectedNote.value(0);
+    QString selectedFileQ = index.data().toString();
+    std::string selectedFile = selectedFileQ.toUtf8().constData();
+    std::string filePathS = "../Notepad/notes/" + selectedFile;
+    char filePath[filePathS.length() + 1];
+    strcpy(filePath, filePathS.c_str());
+    if(remove(filePath) != 0) {
+        perror( "Error deleting file" );
+    }
 }
 
 QTableView* Notepad::getTableView() {
-    QTableView *table = new QTableView;
+    QStandardItemModel* model = new QStandardItemModel(this);
+    model->setColumnCount(2);
+    model->setHeaderData(0, Qt::Horizontal, tr("Title"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Date"));
 
-    QStringListModel *np = new QStringListModel();
-    QStringList list;
-    list << "a" << "b" << "c";
-    np->setStringList(list);
-    table->setModel(np);
+    DIR *notesDirectory;
+    struct dirent *note;
+    if (notesDirectory = opendir("../Notepad/notes")) {
+        while(note = readdir(notesDirectory)){
+            if(strcmp(note->d_name, ".") != 0 && strcmp(note->d_name, "..") != 0) {
+                QList<QStandardItem *> data = getNoteInfoByFilename(*note);
+                model->appendRow(data);
+            }
+        }
+        closedir(notesDirectory);
+    }
+
+    // table settings
+    QTableView *table = new QTableView;
+    table->setModel(model);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     return table;
+}
+
+QList<QStandardItem *> Notepad::getNoteInfoByFilename(struct dirent note) {
+    QList<QStandardItem *> notesInfo;
+    std::string dateString = getFileDate(note.d_name);
+    char dateChar[dateString.length() + 1];
+    strcpy(dateChar, dateString.c_str());
+    notesInfo.append(new QStandardItem(note.d_name));
+    notesInfo.append(new QStandardItem(dateChar));
+    return notesInfo;
+}
+
+std::string Notepad::getFileDate(char* fileName) {
+    int i;
+    std::string fileNameString = "";
+    for (i = 0; i < strlen(fileName); i++) {
+        fileNameString = fileNameString + fileName[i];
+    }
+    std::string filePath = "../Notepad/notes/" + fileNameString;
+    std::string line;
+    std::string date;
+    std::ifstream myfile (filePath);
+    if (myfile.is_open()) {
+        getline (myfile,line);
+        getline (myfile,line); // date is in the second line of each file
+        std::string dateLine = line;
+        date = dateLine.substr(6);
+        myfile.close();
+    }
+    return date;
 }
 
 void Notepad::openDialog() {
