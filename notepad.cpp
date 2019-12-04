@@ -80,15 +80,18 @@ void Notepad::createCategoriesWidgets() {
 void Notepad::createFilteringWidgets() {
     buttonFilter = new QPushButton("Filter");
     buttonClearFilters = new QPushButton("Clear");
+
+    // connect(buttonFilter, SIGNAL(clicked()), this, filter());
+    // connect(buttonClearFilters, SIGNAL(clicked()), this, clearFilters());
 }
 
 void Notepad::createMiddleLayout() {
-    QHBoxLayout *layout = new QHBoxLayout;
+    tableLayout = new QHBoxLayout;
 
     notesTable = this->getTableView();
-    layout->addWidget(notesTable);
+    tableLayout->addWidget(notesTable);
 
-    mainLayout->addLayout(layout);
+    mainLayout->addLayout(tableLayout);
 }
 
 void Notepad::createBottomLayout() {
@@ -107,25 +110,36 @@ void Notepad::createBottomLayoutWidgets() {
     buttonEdit = new QPushButton("Edit");
     buttonDelete = new QPushButton("Delete");
 
-    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialog()));
-    connect(buttonEdit, SIGNAL(clicked()), this, SLOT(openDialog()));
+    connect(buttonNew, SIGNAL(clicked()), this, SLOT(openDialogNew()));
+    connect(buttonEdit, SIGNAL(clicked()), this, SLOT(openDialogEdit()));
     connect(buttonDelete, SIGNAL(clicked()), this, SLOT(deleteSelectedFile()));
 }
 
 void Notepad::deleteSelectedFile() {
-    QModelIndexList selectedNote = notesTable->selectionModel()->selectedRows();
-    if (selectedNote.count() == 0) {
+    std::string selectedFile = getSelectedFile();
+    if (selectedFile == "") {
         return;
     }
-    QModelIndex index = selectedNote.value(0);
-    QString selectedFileQ = index.data().toString();
-    std::string selectedFile = selectedFileQ.toUtf8().constData();
     std::string filePathS = "../Notepad/notes/" + selectedFile;
     char filePath[filePathS.length() + 1];
     strcpy(filePath, filePathS.c_str());
     if(remove(filePath) != 0) {
         perror( "Error deleting file" );
     }
+    delete notesTable;
+    notesTable = this->getTableView();
+    tableLayout->addWidget(notesTable);
+}
+
+std::string Notepad::getSelectedFile() {
+    QModelIndexList selectedNote = notesTable->selectionModel()->selectedRows();
+    if (selectedNote.count() == 0) {
+        return "";
+    }
+    QModelIndex index = selectedNote.value(0);
+    QString selectedFileQString = index.data().toString();
+    std::string selectedFile = selectedFileQString.toUtf8().constData();
+    return selectedFile;
 }
 
 QTableView* Notepad::getTableView() {
@@ -152,6 +166,7 @@ QTableView* Notepad::getTableView() {
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setColumnWidth(0, 200);
 
     return table;
 }
@@ -186,12 +201,24 @@ std::string Notepad::getFileDate(char* fileName) {
     return date;
 }
 
-void Notepad::openDialog() {
+void Notepad::openDialogNew() {
     Dialog dialog;
     if (dialog.exec()) {
-        qDebug() << "Action if saved changes";
-    } else {
-        qDebug() << "Action if cancelled changes";
+        // add validation
+        dialog.saveNote();
+    }
+}
+
+void Notepad::openDialogEdit() {
+    Dialog dialog;
+    std::string selectedFile = getSelectedFile();
+    if (selectedFile == "") {
+        return;
+    }
+    dialog.bindInitialData(selectedFile);
+    if (dialog.exec()) {
+        // add validation
+        dialog.saveNote();
     }
 }
 

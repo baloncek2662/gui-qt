@@ -41,6 +41,7 @@ private:
     void createBottomLayoutWidgets();
     QList<QStandardItem *> getNoteInfoByFilename(struct dirent);
     std::string getFileDate(char* fileName);
+    std::string getSelectedFile();
 
     QTableView* getTableView();
 
@@ -58,11 +59,13 @@ private:
     QPushButton *buttonEdit;
     QPushButton *buttonDelete;
     QTableView *notesTable;
+    QHBoxLayout *tableLayout;
 
 signals:
 
 public slots:
-    void openDialog();
+    void openDialogNew();
+    void openDialogEdit();
     void deleteSelectedFile();
 
 };

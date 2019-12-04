@@ -45,7 +45,7 @@
     </widget>
    </item>
    <item row="2" column="4" colspan="2">
-    <widget class="QLineEdit" name="lineEdit">
+    <widget class="QLineEdit" name="txtCategory">
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
@@ -62,7 +62,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="8">
-    <widget class="QPlainTextEdit" name="plainTextEdit"/>
+    <widget class="QPlainTextEdit" name="txtContent"/>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_4">
@@ -75,7 +75,14 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_2"/>
+    <widget class="QLineEdit" name="txtTitle">
+     <property name="placeholderText">
+      <string/>
+     </property>
+     <property name="cursorMoveStyle">
+      <enum>Qt::VisualMoveStyle</enum>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_3">
@@ -95,7 +102,7 @@
     </widget>
    </item>
    <item row="0" column="4">
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="checkboxMd">
      <property name="text">
       <string/>
      </property>
@@ -112,14 +119,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QListView" name="listView_4">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>126</height>
-      </size>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="categoriesList"/>
    </item>
   </layout>
  </widget>
