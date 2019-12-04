@@ -18,6 +18,8 @@ public:
     void bindInitialData(std::string fileName);
     void saveNote();
 
+    bool isEditMode;
+
 private:
     Ui::Dialog *ui;
 
@@ -25,12 +27,18 @@ private:
     int fileIsMarkdown(std::string fileName);
     QString getFileContent(std::string fileName);
     QStringList getCategoriesList(std::string fileName);
+    void createFile();
+    std::string currentDate();
+    std::string getFormattedCategories();
+    void deleteFile();
 
+    std::string initialFileName;
+    QStringList categories;
 
-    QString title;
-    QString content;
-    int isMarkdown;
-    QStringList categoriesList;
+public slots:
+    void addCategory();
+    void removeCategory();
+    void fillCategory();
 };
 
 #endif // DIALOG_H

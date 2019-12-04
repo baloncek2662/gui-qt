@@ -132,8 +132,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>790</x>
+     <y>437</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -148,8 +148,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>790</x>
+     <y>437</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -157,5 +157,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>addCategory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>657</x>
+     <y>316</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>582</x>
+     <y>347</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>removeCategory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>752</x>
+     <y>320</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>631</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>categoriesList</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>Dialog</receiver>
+   <slot>fillCategory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>244</x>
+     <y>358</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>311</x>
+     <y>428</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>addCategory()</slot>
+  <slot>removeCategory()</slot>
+  <slot>fillCategory()</slot>
+ </slots>
 </ui>

@@ -42,6 +42,7 @@ private:
     QList<QStandardItem *> getNoteInfoByFilename(struct dirent);
     std::string getFileDate(char* fileName);
     std::string getSelectedFile();
+    void refreshNotesTable();
 
     QTableView* getTableView();
 

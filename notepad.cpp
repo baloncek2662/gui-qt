@@ -126,9 +126,8 @@ void Notepad::deleteSelectedFile() {
     if(remove(filePath) != 0) {
         perror( "Error deleting file" );
     }
-    delete notesTable;
-    notesTable = this->getTableView();
-    tableLayout->addWidget(notesTable);
+
+    refreshNotesTable();
 }
 
 std::string Notepad::getSelectedFile() {
@@ -203,23 +202,31 @@ std::string Notepad::getFileDate(char* fileName) {
 
 void Notepad::openDialogNew() {
     Dialog dialog;
+    dialog.isEditMode = false;
     if (dialog.exec()) {
-        // add validation
         dialog.saveNote();
+        refreshNotesTable();
     }
 }
 
 void Notepad::openDialogEdit() {
     Dialog dialog;
+    dialog.isEditMode = true;
     std::string selectedFile = getSelectedFile();
     if (selectedFile == "") {
         return;
     }
     dialog.bindInitialData(selectedFile);
     if (dialog.exec()) {
-        // add validation
         dialog.saveNote();
+        refreshNotesTable();
     }
+}
+
+void Notepad::refreshNotesTable() {
+    delete notesTable;
+    notesTable = this->getTableView();
+    tableLayout->addWidget(notesTable);
 }
 
 Notepad::~Notepad() {
