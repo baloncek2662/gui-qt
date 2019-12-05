@@ -200,7 +200,9 @@ std::string Notepad::getFileDate(char* fileName) {
         date = dateLine.substr(6);
         myfile.close();
     }
-    return date;
+    std::string formatted = "";
+    formatted = date = date.substr(8,2)+"/"+date.substr(5,2)+"/"+date.substr(0,4);
+    return formatted;
 }
 
 void Notepad::openDialogNew() {
@@ -251,24 +253,29 @@ bool Notepad::dateIsValid(std::string fileName) {
     fm = from.substr(3, 2);  fromMonth = std::stoi(fm);
     fd = from.substr(0, 2); fromDay = std::stoi(fd);
     std::string to = dateTo->text().toStdString();
-    ty = from.substr(6, 4);  toYear = std::stoi(ty);
-    tm = from.substr(3, 2);  toMonth = std::stoi(tm);
-    td = from.substr(0, 2); toDay = std::stoi(td);
+    ty = to.substr(6, 4);  toYear = std::stoi(ty);
+    tm = to.substr(3, 2);  toMonth = std::stoi(tm);
+    td = to.substr(0, 2); toDay = std::stoi(td);
 
-    struct tm *fromDate = new struct tm;
-    fromDate->tm_year = fromYear; fromDate->tm_mon = fromMonth; fromDate->tm_mday = fromDay;
-    struct tm *toDate = new struct tm;
-    toDate->tm_year = toYear; toDate->tm_mon = toMonth; toDate->tm_mday = toDay;
-    struct tm *date = new struct tm;
-    date->tm_year = year; date->tm_mon = month; date->tm_mday = day;
-    time_t fromTime = mktime(fromDate);
-    time_t toTime = mktime(toDate);
-    time_t time = mktime(date);
-    double diffSecsFrom = difftime(time, fromTime);
-    double diffSecsTo= difftime(toTime, time);
-    if (diffSecsFrom >= 0 && diffSecsTo >= 0) {
+    bool fromDateValid = dateIsLarger(year, month, day, fromYear, fromMonth, fromDay);
+    bool toDateValid = dateIsLarger(toYear, toMonth, toDay, year, month, day);
+
+    if (fromDateValid && toDateValid) {
         return true;
     }
+
+
+    return false;
+}
+
+bool Notepad::dateIsLarger(int y1, int m1, int d1, int y2, int m2, int d2) {
+    if (y1 > y2) return true;
+    else if (y1 < y2) return false;
+
+    if (m1 > m2) return true;
+    else if (m1 < m2) return false;
+
+    if (d1 >= d2) return true;
     return false;
 }
 

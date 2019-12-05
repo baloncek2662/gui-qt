@@ -44,6 +44,7 @@ private:
     std::string getSelectedFile();
     void refreshNotesTable();
     bool dateIsValid(std::string fileName);
+    bool dateIsLarger(int y1, int m1, int d1, int y2, int m2, int d2);
 
     QTableView* getTableView();
 
