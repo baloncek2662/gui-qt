@@ -22,6 +22,7 @@
 #include <QTreeView>
 
 Notepad::Notepad(QWidget *parent) : QMainWindow(parent) {
+    APPLY_FILTER = false;
     createCentralWidget();
     mainLayout = new QVBoxLayout(centralWidget);
     createTopLayout();
@@ -81,8 +82,8 @@ void Notepad::createFilteringWidgets() {
     buttonFilter = new QPushButton("Filter");
     buttonClearFilters = new QPushButton("Clear");
 
-    // connect(buttonFilter, SIGNAL(clicked()), this, filter());
-    // connect(buttonClearFilters, SIGNAL(clicked()), this, clearFilters());
+    connect(buttonFilter, SIGNAL(clicked()), this, SLOT(filter()));
+    connect(buttonClearFilters, SIGNAL(clicked()), this, SLOT(clearFilters()));
 }
 
 void Notepad::createMiddleLayout() {
@@ -152,8 +153,10 @@ QTableView* Notepad::getTableView() {
     if (notesDirectory = opendir("../Notepad/notes")) {
         while(note = readdir(notesDirectory)){
             if(strcmp(note->d_name, ".") != 0 && strcmp(note->d_name, "..") != 0) {
-                QList<QStandardItem *> data = getNoteInfoByFilename(*note);
-                model->appendRow(data);
+                if (!APPLY_FILTER || dateIsValid(note->d_name)) {
+                    QList<QStandardItem *> data = getNoteInfoByFilename(*note);
+                    model->appendRow(data);
+                }
             }
         }
         closedir(notesDirectory);
@@ -229,5 +232,54 @@ void Notepad::refreshNotesTable() {
     tableLayout->addWidget(notesTable);
 }
 
+bool Notepad::dateIsValid(std::string fileName) {
+    int year, month, day, fromYear, fromMonth, fromDay, toYear, toMonth, toDay;
+    std::string y, m, d, fy, fm, fd, ty, tm, td;
+    std::string line;
+    std::string filePath = "../Notepad/notes/" + fileName;
+    std::ifstream myfile (filePath);
+    if (myfile.is_open()) {
+        getline(myfile, line); // discard category line
+        getline(myfile, line);
+        y = line.substr(6 + 0, 4);  year = std::stoi(y);
+        m = line.substr(6 + 5, 2);  month = std::stoi(m);
+        d = line.substr(6 + 8, line.length() - 14); day = std::stoi(d);
+        myfile.close();
+    }
+    std::string from = dateFrom->text().toStdString();
+    fy = from.substr(6, 4);  fromYear = std::stoi(fy);
+    fm = from.substr(3, 2);  fromMonth = std::stoi(fm);
+    fd = from.substr(0, 2); fromDay = std::stoi(fd);
+    std::string to = dateTo->text().toStdString();
+    ty = from.substr(6, 4);  toYear = std::stoi(ty);
+    tm = from.substr(3, 2);  toMonth = std::stoi(tm);
+    td = from.substr(0, 2); toDay = std::stoi(td);
+
+    struct tm *fromDate = new struct tm;
+    fromDate->tm_year = fromYear; fromDate->tm_mon = fromMonth; fromDate->tm_mday = fromDay;
+    struct tm *toDate = new struct tm;
+    toDate->tm_year = toYear; toDate->tm_mon = toMonth; toDate->tm_mday = toDay;
+    struct tm *date = new struct tm;
+    date->tm_year = year; date->tm_mon = month; date->tm_mday = day;
+    time_t fromTime = mktime(fromDate);
+    time_t toTime = mktime(toDate);
+    time_t time = mktime(date);
+    double diffSecsFrom = difftime(time, fromTime);
+    double diffSecsTo= difftime(toTime, time);
+    if (diffSecsFrom >= 0 && diffSecsTo >= 0) {
+        return true;
+    }
+    return false;
+}
+
+void Notepad::filter() {
+    APPLY_FILTER = true;
+    refreshNotesTable();
+}
+
+void Notepad::clearFilters() {
+    APPLY_FILTER = false;
+    refreshNotesTable();
+}
 Notepad::~Notepad() {
 }

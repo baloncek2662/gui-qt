@@ -43,6 +43,7 @@ private:
     std::string getFileDate(char* fileName);
     std::string getSelectedFile();
     void refreshNotesTable();
+    bool dateIsValid(std::string fileName);
 
     QTableView* getTableView();
 
@@ -62,13 +63,15 @@ private:
     QTableView *notesTable;
     QHBoxLayout *tableLayout;
 
+    bool APPLY_FILTER;
 signals:
 
 public slots:
     void openDialogNew();
     void openDialogEdit();
     void deleteSelectedFile();
-
+    void filter();
+    void clearFilters();
 };
 
 
