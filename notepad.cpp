@@ -73,9 +73,9 @@ void Notepad::createCategoriesWidgets() {
     labelCategory = new QLabel;
     labelCategory->setText("Category: ");
     dropdownCategories = new QComboBox;
-    // automate adding items
-    dropdownCategories->addItem("Option 1");
-    dropdownCategories->addItem("Option 2");
+    // TODO automate adding items
+    dropdownCategories->addItem("Category 1");
+    dropdownCategories->addItem("Category 2");
 }
 
 void Notepad::createFilteringWidgets() {
@@ -164,11 +164,12 @@ QTableView* Notepad::getTableView() {
 
     // table settings
     QTableView *table = new QTableView;
+    table->setAlternatingRowColors(true);
     table->setModel(model);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->setColumnWidth(0, 200);
+    table->setColumnWidth(0, this->width());
 
     return table;
 }

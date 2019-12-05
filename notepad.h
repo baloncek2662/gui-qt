@@ -27,6 +27,7 @@ public:
     ~Notepad();
 
 private:
+    bool APPLY_FILTER;
     QString title;
     QString text;
 
@@ -39,14 +40,14 @@ private:
     void createCategoriesWidgets();
     void createFilteringWidgets();
     void createBottomLayoutWidgets();
+
+    QTableView* getTableView();
     QList<QStandardItem *> getNoteInfoByFilename(struct dirent);
     std::string getFileDate(char* fileName);
     std::string getSelectedFile();
     void refreshNotesTable();
     bool dateIsValid(std::string fileName);
     bool dateIsLarger(int y1, int m1, int d1, int y2, int m2, int d2);
-
-    QTableView* getTableView();
 
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;
@@ -64,7 +65,6 @@ private:
     QTableView *notesTable;
     QHBoxLayout *tableLayout;
 
-    bool APPLY_FILTER;
 signals:
 
 public slots:

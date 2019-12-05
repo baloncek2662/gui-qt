@@ -23,6 +23,9 @@ public:
 private:
     Ui::Dialog *ui;
 
+    std::string initialFileName;
+    QStringList categories;
+
     std::string getFileTitle(std::string fileName);
     int fileIsMarkdown(std::string fileName);
     QString getFileContent(std::string fileName);
@@ -31,9 +34,6 @@ private:
     std::string currentDate();
     std::string getFormattedCategories();
     void deleteFile();
-
-    std::string initialFileName;
-    QStringList categories;
 
 public slots:
     void addCategory();
