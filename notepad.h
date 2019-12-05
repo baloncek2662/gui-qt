@@ -48,6 +48,11 @@ private:
     void refreshNotesTable();
     bool dateIsValid(std::string fileName);
     bool dateIsLarger(int y1, int m1, int d1, int y2, int m2, int d2);
+<<<<<<< HEAD
+=======
+
+    QTableView* getTableView();
+>>>>>>> d36fd1bd528c50bee37c1e5851fd91aa2b6ec510
 
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;
